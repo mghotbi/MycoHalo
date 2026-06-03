@@ -1,0 +1,38 @@
+Package: MycoHalo
+Title: Quantification of Fungal Melanization and Interaction Halos
+Version: 0.0.0.9000
+Authors@R:
+    person(
+      given = "Mitra",
+      family = "Ghotbi",
+      role = c("aut", "cre"),
+      email = "mitra.ghotbir@gemail.com"
+    )
+Description:
+    Tools for automated analysis of fungal colony images,
+    including colony segmentation, melanization quantification,
+    radial pigmentation profiling, halo detection, and
+    microbial confrontation assays. The package provides
+    reproducible workflows for measuring grayscale intensity,
+    melanization indices, spatial pigmentation gradients,
+    and interaction-associated phenotypes from digital images.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+Depends:
+    R (>= 4.3.0)
+Imports:
+    cli,
+    EBImage,
+    dplyr,
+    ggplot2,
+    magick,
+    purrr,
+    tibble
+Suggests:
+    testthat (>= 3.0.0),
+    knitr,
+    rmarkdown
+Config/testthat/edition: 3
+LazyData: true
+Config/roxygen2/version: 8.0.0

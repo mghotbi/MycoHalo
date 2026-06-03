@@ -1,0 +1,150 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# MycoHalo
+
+The goal of MycoHalo is to ...
+
+## Installation
+
+You can install the development version of MycoHalo like so:
+
+ 
+```{r}
+largest <- which.max(areas)
+
+largest
+```
+ # Build clean plate mask
+```{r}
+plate_mask <- labels == largest
+
+EBImage::display(plate_mask)
+
+
+```
+ 
+# label again
+```{r}
+labels <- EBImage::bwlabel(mask_clean)
+
+max(labels)
+
+```
+# component size
+```{r}
+features <- EBImage::computeFeatures.shape(
+  labels
+)
+
+head(
+  sort(
+    features[, "s.area"],
+    decreasing = TRUE
+  ),
+  20
+)
+```
+```{r}
+
+mask_clean <- EBImage::opening(
+  mask,
+  EBImage::makeBrush(
+    size = 7,
+    shape = "disc"
+  )
+)
+
+mask <- gray > 0.25
+
+EBImage::display(mask)
+
+```
+
+
+```{r}
+
+moments <- EBImage::computeFeatures.moment(labels)
+
+moments
+
+```
+
+# colony segmentation may become easy using:
+
+```{r}
+plate <- detect_plate(plate)
+plate
+
+labels <- EBImage::bwlabel(mask)
+
+max(labels)
+
+features <- EBImage::computeFeatures.shape(labels)
+
+features[, "s.area"]
+
+
+```
+
+
+## morphological operation
+
+```{r}
+mask_clean <- EBImage::opening(
+  mask,
+  EBImage::makeBrush(
+    size = 15,
+    shape = "disc"
+  )
+)
+
+mask_clean <- EBImage::fillHull(
+  mask_clean
+)
+
+EBImage::display(mask_clean)
+```
+
+## Example
+
+This is a basic example which shows you how to solve a common problem:
+
+```{r example}
+library(MycoHalo)
+labels <- EBImage::bwlabel(mask)
+
+features <- EBImage::computeFeatures.shape(labels)
+
+areas <- features[, "s.area"]
+
+areas
+```
+
+What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:
+
+```{r cars}
+summary(cars)
+```
+
+You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date. `devtools::build_readme()` is handy for this.
+
+You can also embed plots, for example:
+
+```{r pressure, echo = FALSE}
+plot(pressure)
+```
+
+In that case, don't forget to commit and push the resulting figure files, so they display on GitHub and CRAN.
