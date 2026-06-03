@@ -3,6 +3,7 @@
 S3method(print,mycohalo_plate)
 export(create_plate)
 export(detect_plate)
+export(diagnose_histogram)
 export(diagnose_threshold)
 export(example_plate)
 export(image_info)

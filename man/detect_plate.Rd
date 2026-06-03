@@ -4,21 +4,42 @@
 \alias{detect_plate}
 \title{Detect Petri dish}
 \usage{
-detect_plate(plate)
+detect_plate(plate, threshold = 0.25)
 }
 \arguments{
-\item{plate}{A mycohalo_plate object.}
+\item{plate}{A \code{mycohalo_plate} object.}
+
+\item{threshold}{Numeric threshold between 0 and 1.}
 }
 \value{
-Updated mycohalo_plate object.
+Updated \code{mycohalo_plate} object.
 }
 \description{
-Detect the Petri dish region from the image background.
+Detect the Petri dish region from a fungal plate image.
+}
+\details{
+The function:
+
+\enumerate{
+\item Converts the image to grayscale.
+\item Applies intensity thresholding.
+\item Labels connected components.
+\item Selects the largest connected component.
+\item Stores the resulting plate mask and summary statistics.
+}
 }
 \examples{
 \dontrun{
-plate <- read_plate("plate.jpg")
-plate <- detect_plate(plate)
+
+plate <- read_plate(
+  "plate.jpg"
+)
+
+plate <- detect_plate(
+  plate,
+  threshold = 0.25
+)
+
 }
 
 }
