@@ -57,7 +57,7 @@
 #'   label matrix (`labels`, values = row index of `colony_table`),
 #'   `satellites`, `bacteria` and `halo` masks and `colony_table`.
 #' @examples
-#' sim <- simulate_plate(seed = 6)
+#' sim <- simulate_plate(width = 300, height = 400, seed = 6)
 #' p <- read_plate(sim$image) |> detect_plate() |> model_background() |>
 #'   classify_pixels(plate_layout()) |> segment_colonies(plate_layout())
 #' p$objects$colony_table

@@ -4,20 +4,21 @@
 #' shows the (flat-field corrected) photograph with the detected dish, the
 #' analysed agar disk, expected inoculation points and search radii, colony
 #' outlines, the bacterium and its halo; the right panel shows the pixel
-#' classification.
+#' classification, with each separated colony filled in its own colour (same
+#' colours as the outlines on the left).
 #'
 #' @param x A `mycohalo_result` (computed with `keep_images = TRUE`).
 #' @param panels Which panels to draw.
 #' @param colony_cols Colours for the colonies.
 #' @return Invisibly `x`.
 #' @examples
-#' sim <- simulate_plate(seed = 11)
+#' sim <- simulate_plate(width = 300, height = 400, seed = 11)
 #' res <- analyze_plate(sim$image, verbose = FALSE)
 #' plot_qc(res)
 #' @export
 plot_qc <- function(x, panels = c("overlay", "classes"),
-                    colony_cols = c("#00E5FF", "#FF4081", "#76FF03", "#FFD740",
-                                    "#E040FB", "#FF6E40", "#40C4FF", "#B2FF59")) {
+                    colony_cols = c("#1FB5E0", "#D6336C", "#3FA34D", "#7B5CD6",
+                                    "#00897B", "#F48FB1", "#8D6E63", "#5C6BC0")) {
   if (!inherits(x, "mycohalo_result") || is.null(x$plate)) {
     cli::cli_abort("{.arg x} must be a {.cls mycohalo_result} computed with {.code keep_images = TRUE}.")
   }
@@ -26,8 +27,15 @@ plot_qc <- function(x, panels = c("overlay", "classes"),
   d <- p$dish
   H <- dim(p$rgb)[1]; W <- dim(p$rgb)[2]
   ncol_ <- length(panels)
-  op <- graphics::par(mfrow = c(1, ncol_), mar = c(0.5, 0.5, 2.5, 0.5), bg = "white")
+  # images in the top row, one legend strip under each image: the legends
+  # get their own plotting regions, so they never overlap the images and do
+  # not depend on the size or shape of the graphics window
+  op <- graphics::par(no.readonly = TRUE)
   on.exit(graphics::par(op), add = TRUE)
+  graphics::layout(matrix(seq_len(2 * ncol_), nrow = 2, byrow = TRUE),
+                   heights = c(4, 1.05))
+  graphics::par(mar = c(0.5, 0.5, 2.5, 0.5), bg = "white")
+  legends <- list()
   ct <- ob$colony_table
   col_rgb <- grDevices::col2rgb(colony_cols) / 255
   thick <- max(1, round(min(H, W) / 700))
@@ -49,7 +57,7 @@ plot_qc <- function(x, panels = c("overlay", "classes"),
     for (i in which(ct$detected)) {
       img <- paint(img, outline(ob$labels == i), col_rgb[, (i - 1) %% ncol(col_rgb) + 1])
     }
-    if (any(ob$satellites)) img <- paint(img, outline(ob$satellites), c(1, 0, 1))
+    if (any(ob$satellites)) img <- paint(img, outline(ob$satellites), c(1, 1, 1))
     if (any(ob$halo)) img <- paint(img, outline(ob$halo | ob$bacteria), c(1, 0.6, 0))
     if (any(ob$bacteria)) img <- paint(img, outline(ob$bacteria), c(1, 1, 0.2))
     show_rgb(img, main = sprintf("%s  |  %.4f mm/px", p$id, d$mm_per_px))
@@ -74,11 +82,15 @@ plot_qc <- function(x, panels = c("overlay", "classes"),
       graphics::text(cl$centroid_x_px[i], cl$centroid_y_px[i], lbl, col = "black", font = 2, cex = 0.95)
       graphics::text(cl$centroid_x_px[i] - 1.5, cl$centroid_y_px[i] - 1.5, lbl, col = "white", font = 2, cex = 0.95)
     }
-    graphics::legend("bottomleft", bg = grDevices::adjustcolor("white", 0.8), box.col = NA, cex = 0.75,
-                     legend = c("dish edge", "analysed agar", "expected position / search",
-                                "bacterium", "halo", "satellite"),
-                     col = c("#00B8D4", "#00B8D4", "grey70", "#FFFF33", "#FF9900", "magenta"),
-                     lty = c(2, 1, 3, 1, 1, 1), lwd = 2)
+    det <- which(ct$detected)
+    ccols <- colony_cols[(det - 1) %% length(colony_cols) + 1]
+    legends$overlay <- list(
+      title = "Outlines",
+      legend = c("dish edge", "analysed agar", "expected position / search",
+                 "bacterium", "halo", "satellite / debris (excluded)",
+                 paste("colony", ct$id[det])),
+      col = c("#00B8D4", "#00B8D4", "grey55", "#E6D200", "#FF9900", "grey75", ccols),
+      lty = c(2, 1, 3, rep(1, 3 + length(det))), lwd = 3)
   }
   if ("classes" %in% panels) {
     img <- array(0, c(H, W, 3))
@@ -91,12 +103,28 @@ plot_qc <- function(x, panels = c("overlay", "classes"),
     img <- paint(img, cmap == 4L, c(0.9, 0.1, 0.1))
     if (!is.null(p$bg$shadow)) img <- paint(img, p$bg$shadow, c(0.10, 0.16, 0.45))
     for (i in which(ct$detected)) {
-      img <- paint(img, ob$labels == i, col_rgb[, (i - 1) %% ncol(col_rgb) + 1] * 0.8)
+      img <- paint(img, ob$labels == i, col_rgb[, (i - 1) %% ncol(col_rgb) + 1])
     }
     show_rgb(img, main = sprintf("Pixel classes (%s)", p$classes$source))
-    graphics::legend("bottomleft", bg = grDevices::adjustcolor("white", 0.8), box.col = NA, cex = 0.75,
-                     legend = c("agar", "fungus (unassigned)", "bacteria", "halo", "other", "cast shadow"),
-                     fill = c("#40454D", "#8C8C8C", "#FAF2D9", "#D9B326", "#E61A1A", "#1A2973"))
+    det <- which(ct$detected)
+    ccols <- colony_cols[(det - 1) %% length(colony_cols) + 1]
+    legends$classes <- list(
+      title = "Pixel classes",
+      legend = c("agar", "fungus, not a colony", "bacterium", "halo", "other",
+                 "cast shadow", paste("colony", ct$id[det])),
+      fill = c("#40454D", "#8C8C8C", "#FAF2D9", "#D9B326", "#E61A1A", "#1A2973", ccols),
+      border = "grey30")
+  }
+  # ---- legend strips (second row), one per panel, in panel order
+  for (k in panels) {
+    lg <- legends[[k]]
+    graphics::par(mar = c(0, 0.5, 0, 0.5))
+    graphics::plot.new()
+    if (is.null(lg)) next
+    args <- c(list(x = "top", bty = "n", ncol = 2, cex = 0.95, title.font = 2,
+                   title.adj = 0, x.intersp = 0.8, y.intersp = 1.15,
+                   seg.len = 2.2, xjust = 0.5), lg)
+    do.call(graphics::legend, args)
   }
   invisible(x)
 }
@@ -121,7 +149,7 @@ show_rgb <- function(rgb, main = "") {
 #' @param facet_by Optional column for facets (e.g. `plate_id`, treatment).
 #' @return A ggplot object (requires \pkg{ggplot2}).
 #' @examples
-#' sim <- simulate_plate(seed = 12, edge_lightening = 10)
+#' sim <- simulate_plate(width = 300, height = 400, seed = 12, edge_lightening = 10)
 #' res <- analyze_plate(sim$image, verbose = FALSE)
 #' if (requireNamespace("ggplot2", quietly = TRUE)) plot_profiles(res)
 #' @export

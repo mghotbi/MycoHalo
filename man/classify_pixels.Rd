@@ -93,7 +93,7 @@ Pixels far from every class (Mahalanobis distance above the
 (dust, bubbles, contaminants) and never measured.
 }
 \examples{
-sim <- simulate_plate(seed = 4)
+sim <- simulate_plate(width = 300, height = 400, seed = 4)
 p <- read_plate(sim$image) |> detect_plate() |> model_background()
 p <- classify_pixels(p, plate_layout())
 table(p$classes$map)

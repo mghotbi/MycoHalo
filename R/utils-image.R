@@ -223,3 +223,20 @@ edt_local <- function(mask, pad = 2L) {
   out[r1:r2, c1:c2] <- d
   out
 }
+
+#' Evaluate an expression with a fixed RNG seed, then restore the user's
+#' random-number stream (CRAN policy: packages must not change .Random.seed)
+#' @keywords internal
+#' @noRd
+with_seed <- function(seed, expr) {
+  genv <- globalenv()
+  had <- exists(".Random.seed", envir = genv, inherits = FALSE)
+  old <- if (had) get(".Random.seed", envir = genv, inherits = FALSE) else NULL
+  on.exit({
+    if (had) assign(".Random.seed", old, envir = genv)
+    else if (exists(".Random.seed", envir = genv, inherits = FALSE))
+      rm(".Random.seed", envir = genv)
+  }, add = TRUE)
+  set.seed(seed)
+  expr
+}

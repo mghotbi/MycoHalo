@@ -7,8 +7,8 @@
 plot_qc(
   x,
   panels = c("overlay", "classes"),
-  colony_cols = c("#00E5FF", "#FF4081", "#76FF03", "#FFD740", "#E040FB", "#FF6E40",
-    "#40C4FF", "#B2FF59")
+  colony_cols = c("#1FB5E0", "#D6336C", "#3FA34D", "#7B5CD6", "#00897B", "#F48FB1",
+    "#8D6E63", "#5C6BC0")
 )
 }
 \arguments{
@@ -26,10 +26,11 @@ Always look at the QC figure before trusting numbers. The left panel
 shows the (flat-field corrected) photograph with the detected dish, the
 analysed agar disk, expected inoculation points and search radii, colony
 outlines, the bacterium and its halo; the right panel shows the pixel
-classification.
+classification, with each separated colony filled in its own colour (same
+colours as the outlines on the left).
 }
 \examples{
-sim <- simulate_plate(seed = 11)
+sim <- simulate_plate(width = 300, height = 400, seed = 11)
 res <- analyze_plate(sim$image, verbose = FALSE)
 plot_qc(res)
 }

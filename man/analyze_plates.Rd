@@ -8,7 +8,7 @@ analyze_plates(
   files,
   metadata = NULL,
   layout = plate_layout(),
-  qc_dir = "mycohalo_qc",
+  qc_dir = NULL,
   ...,
   verbose = TRUE
 )
@@ -25,7 +25,9 @@ bacterium, day, replicate ...). Merged into all output tables.}
 \verb{function(metadata_row)} returning the layout for each plate (e.g.
 \code{centre = "none"} for controls).}
 
-\item{qc_dir}{Directory for QC PNGs (created if needed); \code{NULL} to skip.}
+\item{qc_dir}{Directory for QC PNGs (created if needed). The default
+\code{NULL} writes nothing; give a folder, e.g. \code{qc_dir = "qc"}, to save one
+QC figure per plate.}
 
 \item{...}{Further arguments passed to \code{\link[=analyze_plate]{analyze_plate()}}.}
 

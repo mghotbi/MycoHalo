@@ -73,7 +73,8 @@ the centre is darker (simulated localized melanization response).}
 
 \item{grey_card}{Add an 18 \% grey card (L* = 50) in the lower-left corner.}
 
-\item{seed}{Random seed.}
+\item{seed}{Random seed. The user's random-number stream is restored
+afterwards.}
 }
 \value{
 A list with \code{image} (H x W x 3 sRGB array) and \code{truth} (dish
@@ -92,7 +93,7 @@ simulator is used to validate MycoHalo's accuracy (see the unit tests and
 the vignette) and to test new settings before applying them to real data.
 }
 \examples{
-sim <- simulate_plate(seed = 1)
+sim <- simulate_plate(width = 300, height = 400, seed = 1)
 show <- function(a) { plot(as.raster(a)) }
 show(sim$image)
 sim$truth$colonies

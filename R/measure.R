@@ -57,7 +57,7 @@
 #'
 #' @return Data frame with one row per expected colony.
 #' @examples
-#' sim <- simulate_plate(seed = 7)
+#' sim <- simulate_plate(width = 300, height = 400, seed = 7)
 #' res <- analyze_plate(sim$image, verbose = FALSE)
 #' res$colonies[, c("colony_id", "area_mm2", "L_mean", "MI_mean")]
 #' @export
@@ -187,7 +187,7 @@ measure_colonies <- function(plate, edge_exclude_mm = 0.1, dark_L = NULL,
 #' @param n_boot,block_mm,seed Block-bootstrap settings.
 #' @return Data frame with one row per colony x ring.
 #' @examples
-#' sim <- simulate_plate(seed = 8, edge_lightening = 8)
+#' sim <- simulate_plate(width = 300, height = 400, seed = 8, edge_lightening = 8)
 #' res <- analyze_plate(sim$image, verbose = FALSE)
 #' head(res$profiles)
 #' @export
@@ -243,12 +243,8 @@ block_boot_mean <- function(v, block, n_boot = 200L, seed = 1L, level = 0.95) {
   cnts <- as.vector(tapply(v, f, length))
   nb <- length(sums)
   if (nb < 3) return(c(NA_real_, NA_real_))
-  if (!is.null(seed)) {
-    old <- if (exists(".Random.seed", envir = globalenv())) get(".Random.seed", envir = globalenv()) else NULL
-    on.exit(if (!is.null(old)) assign(".Random.seed", old, envir = globalenv()), add = TRUE)
-    set.seed(seed)
-  }
-  Wm <- stats::rmultinom(n_boot, nb, rep(1 / nb, nb))
+  Wm <- with_seed(if (is.null(seed)) sample.int(1e6, 1) else seed,
+                  stats::rmultinom(n_boot, nb, rep(1 / nb, nb)))
   bm <- colSums(Wm * sums) / colSums(Wm * cnts)
   a <- (1 - level) / 2
   stats::quantile(bm, c(a, 1 - a), names = FALSE)

@@ -202,29 +202,29 @@ region <code>c(x, y, r)</code> in relative image coordinates, or <code>"agar"</c
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="simulate_plate.html">simulate_plate</a></span><span class="op">(</span>seed <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="simulate_plate.html">simulate_plate</a></span><span class="op">(</span>width <span class="op">=</span> <span class="fl">300</span>, height <span class="op">=</span> <span class="fl">400</span>, seed <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">analyze_plate</span><span class="op">(</span><span class="va">sim</span><span class="op">$</span><span class="va">image</span>, id <span class="op">=</span> <span class="st">"sim10"</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">res</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> &lt;mycohalo_result&gt; plate <span style="color: #0000BB;">"sim10"</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> Scale: 0.07978 mm/px; agar L* = 22.3</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> Scale: 0.2393 mm/px; agar L* = 22.2</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> Colonies detected: 4 / 4; satellites: 1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> Bacterium r = 6.2 mm; halo outer r = 17.02 mm</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> Bacterium r = 6.36 mm; halo outer r = 17.01 mm</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  colony_id area_mm2 L_mean MI_mean MI_lo MI_hi delta_MI_facing</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         TL      155   52.4    47.6  47.3  47.9          0.0837</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         TR      155   46.5    53.5  53.1  53.8         -0.3752</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         BR      155   41.1    58.9  58.6  59.2          1.4742</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         BL      155   59.2    40.8  40.5  41.1         -0.0924</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         TL      155   51.2    48.8  48.4  49.1            2.29</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         TR      156   46.9    53.1  52.7  53.4            2.51</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         BR      155   40.0    60.0  59.6  60.4            2.73</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         BL      156   57.7    42.3  42.0  42.6           -2.54</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  growth_inhibition_pct</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                  4.827</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                  5.359</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                  0.865</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                  5.449</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                  2.450</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                  0.270</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 -0.152</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 -7.634</span>
 <span class="r-in"><span><span class="va">res</span><span class="op">$</span><span class="va">colonies</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"colony_id"</span>, <span class="st">"MI_mean"</span>, <span class="st">"delta_MI_facing"</span><span class="op">)</span><span class="op">]</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    colony_id  MI_mean delta_MI_facing</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> x         TL 47.61365      0.08369550</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> x1        TR 53.46066     -0.37521051</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> x2        BR 58.91630      1.47424785</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> x3        BL 40.80491     -0.09235599</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x         TL 48.75743        2.293812</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x1        TR 53.05115        2.514062</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x2        BR 59.99747        2.729403</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x3        BL 42.27137       -2.539792</span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">analyze_plate</span><span class="op">(</span><span class="st">"plates/2026_05_26_20.JPG"</span>, layout <span class="op">=</span> <span class="fu"><a href="plate_layout.html">plate_layout</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="plot_qc.html">plot_qc</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></span>

@@ -85,7 +85,7 @@ from the colony to the bacterial colony and to the halo (0 = contact).}
 }
 }
 \examples{
-sim <- simulate_plate(seed = 7)
+sim <- simulate_plate(width = 300, height = 400, seed = 7)
 res <- analyze_plate(sim$image, verbose = FALSE)
 res$colonies[, c("colony_id", "area_mm2", "L_mean", "MI_mean")]
 }

@@ -82,7 +82,7 @@ annotation effort rather than biology determines class frequencies).</p></dd>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="simulate_plate.html">simulate_plate</a></span><span class="op">(</span>seed <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="simulate_plate.html">simulate_plate</a></span><span class="op">(</span>width <span class="op">=</span> <span class="fl">300</span>, height <span class="op">=</span> <span class="fl">400</span>, seed <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="read_plate.html">read_plate</a></span><span class="op">(</span><span class="va">sim</span><span class="op">$</span><span class="va">image</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="detect_plate.html">detect_plate</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="model_background.html">model_background</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">reg</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>class <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"fungus"</span>, <span class="st">"bacteria"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                  x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">sim</span><span class="op">$</span><span class="va">truth</span><span class="op">$</span><span class="va">colonies</span><span class="op">$</span><span class="va">x</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="va">p</span><span class="op">$</span><span class="va">dish</span><span class="op">$</span><span class="va">x</span><span class="op">)</span>,</span></span>
@@ -90,10 +90,10 @@ annotation effort rather than biology determines class frequencies).</p></dd>
 <span class="r-in"><span><span class="va">clf</span> <span class="op">&lt;-</span> <span class="fu">train_classifier</span><span class="op">(</span><span class="fu"><a href="extract_training_pixels.html">extract_training_pixels</a></span><span class="op">(</span><span class="va">p</span>, <span class="va">reg</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">clf</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> &lt;mycohalo_classifier&gt; Gaussian (QDA) pixel classifier</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> fungus: n = 195; median |dE| = 31.2, colour direction (L,a,b) = (0.99, 0.042,</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>   0.097)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> bacteria: n = 208; median |dE| = 63.4, colour direction (L,a,b) = (0.98,</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>   0.016, 0.21)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> fungus: n = 201; median |dE| = 33.4, colour direction (L,a,b) = (0.99, 0.05,</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   0.089)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> bacteria: n = 208; median |dE| = 66.7, colour direction (L,a,b) = (0.98,</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   0.015, 0.21)</span>
 </code></pre></div>
     </div>
   </div>

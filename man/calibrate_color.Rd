@@ -32,7 +32,7 @@ patch of an X-Rite ColorChecker Classic has \eqn{L^* \approx 51}. The patch
 must be evenly lit and not clipped.
 }
 \examples{
-sim <- simulate_plate(seed = 2, exposure = 0.8, grey_card = TRUE)
+sim <- simulate_plate(width = 300, height = 400, seed = 2, exposure = 0.8, grey_card = TRUE)
 plate <- read_plate(sim$image)
 plate <- calibrate_color(plate, region = sim$truth$grey_card)
 }

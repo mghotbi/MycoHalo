@@ -21,7 +21,7 @@ A ggplot object (requires \pkg{ggplot2}).
 Plot edge-to-centre melanization profiles
 }
 \examples{
-sim <- simulate_plate(seed = 12, edge_lightening = 10)
+sim <- simulate_plate(width = 300, height = 400, seed = 12, edge_lightening = 10)
 res <- analyze_plate(sim$image, verbose = FALSE)
 if (requireNamespace("ggplot2", quietly = TRUE)) plot_profiles(res)
 }

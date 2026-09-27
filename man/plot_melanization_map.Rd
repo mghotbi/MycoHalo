@@ -64,7 +64,8 @@ a magnitude and melanin is brown-black. Heights and colours share the same
 scale, set by the observed MI range (or \code{mi_range}).
 }
 \examples{
-sim <- simulate_plate(seed = 42, facing_darkening = 5, edge_lightening = 8)
+sim <- simulate_plate(width = 300, height = 400, seed = 42,
+                     facing_darkening = 5, edge_lightening = 8)
 res <- analyze_plate(sim$image, verbose = FALSE)
 plot_melanization_map(res)
 }

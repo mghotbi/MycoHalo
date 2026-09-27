@@ -174,14 +174,14 @@ from the colony to the bacterial colony and to the halo (0 = contact).</p></dd>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="simulate_plate.html">simulate_plate</a></span><span class="op">(</span>seed <span class="op">=</span> <span class="fl">7</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="simulate_plate.html">simulate_plate</a></span><span class="op">(</span>width <span class="op">=</span> <span class="fl">300</span>, height <span class="op">=</span> <span class="fl">400</span>, seed <span class="op">=</span> <span class="fl">7</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="analyze_plate.html">analyze_plate</a></span><span class="op">(</span><span class="va">sim</span><span class="op">$</span><span class="va">image</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">res</span><span class="op">$</span><span class="va">colonies</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"colony_id"</span>, <span class="st">"area_mm2"</span>, <span class="st">"L_mean"</span>, <span class="st">"MI_mean"</span><span class="op">)</span><span class="op">]</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    colony_id area_mm2   L_mean  MI_mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> x         TL 155.2386 52.77098 47.22902</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> x1        TR 154.7231 47.13998 52.86002</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> x2        BR 154.4621 40.80459 59.19541</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> x3        BL 155.0604 59.40702 40.59298</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x         TL 154.6602 52.29070 47.70930</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x1        TR 155.3476 46.52899 53.47101</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x2        BR 155.4621 41.44714 58.55286</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x3        BL 155.2903 58.41531 41.58469</span>
 </code></pre></div>
     </div>
   </div>

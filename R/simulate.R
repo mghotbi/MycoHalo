@@ -31,14 +31,15 @@
 #' @param exposure Multiplicative exposure error in linear light.
 #' @param noise_sd Gaussian sensor noise (sRGB units, 0-1).
 #' @param grey_card Add an 18 % grey card (L* = 50) in the lower-left corner.
-#' @param seed Random seed.
+#' @param seed Random seed. The user's random-number stream is restored
+#'   afterwards.
 #'
 #' @return A list with `image` (H x W x 3 sRGB array) and `truth` (dish
 #'   circle, `mm_per_px`, per-colony true area and mean \eqn{L^*} before
 #'   illumination effects, label matrix, bacteria and halo masks, grey-card
 #'   region).
 #' @examples
-#' sim <- simulate_plate(seed = 1)
+#' sim <- simulate_plate(width = 300, height = 400, seed = 1)
 #' show <- function(a) { plot(as.raster(a)) }
 #' show(sim$image)
 #' sim$truth$colonies
@@ -53,7 +54,21 @@ simulate_plate <- function(width = 900, height = 1200, dish_r_frac = 0.47,
                            agar_lab = c(22, -1, -4), background_lab = c(8, 0, 1),
                            satellite = TRUE, vignetting = 0.25, exposure = 1,
                            noise_sd = 0.012, grey_card = FALSE, seed = 1) {
-  set.seed(seed)
+  with_seed(seed, simulate_plate_impl(
+    width, height, dish_r_frac, dish_diameter_mm, layout, colony_radius_mm,
+    colony_L, colony_ab, edge_lightening, facing_darkening, texture_sd, bacteria,
+    bacteria_radius_mm, halo_radius_mm, bacteria_lab, halo_lab, agar_lab,
+    background_lab, satellite, vignetting, exposure, noise_sd, grey_card))
+}
+
+#' @keywords internal
+#' @noRd
+simulate_plate_impl <- function(width, height, dish_r_frac, dish_diameter_mm, layout,
+                                colony_radius_mm, colony_L, colony_ab, edge_lightening,
+                                facing_darkening, texture_sd, bacteria, bacteria_radius_mm,
+                                halo_radius_mm, bacteria_lab, halo_lab, agar_lab,
+                                background_lab, satellite, vignetting, exposure,
+                                noise_sd, grey_card) {
   if (is.null(bacteria)) bacteria <- layout$centre == "bacteria"
   H <- height; W <- width
   R <- dish_r_frac * H

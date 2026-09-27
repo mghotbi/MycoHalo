@@ -122,23 +122,23 @@ Choose <code>block_mm</code> at least as large as the wrinkle / texture scale
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="simulate_plate.html">simulate_plate</a></span><span class="op">(</span>seed <span class="op">=</span> <span class="fl">8</span>, edge_lightening <span class="op">=</span> <span class="fl">8</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="simulate_plate.html">simulate_plate</a></span><span class="op">(</span>width <span class="op">=</span> <span class="fl">300</span>, height <span class="op">=</span> <span class="fl">400</span>, seed <span class="op">=</span> <span class="fl">8</span>, edge_lightening <span class="op">=</span> <span class="fl">8</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="analyze_plate.html">analyze_plate</a></span><span class="op">(</span><span class="va">sim</span><span class="op">$</span><span class="va">image</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">profiles</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   plate_id colony_id ring from_edge_mm to_edge_mm mid_mm  rel_depth n_pixels</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    plate        TL    1          0.0        0.5   0.25 0.04209011     3832</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2    plate        TL    2          0.5        1.0   0.75 0.12627034     3497</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3    plate        TL    3          1.0        1.5   1.25 0.21045056     3182</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4    plate        TL    4          1.5        2.0   1.75 0.29463079     2870</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5    plate        TL    5          2.0        2.5   2.25 0.37881101     2505</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6    plate        TL    6          2.5        3.0   2.75 0.46299124     2187</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    plate        TL    1          0.0        0.5   0.25 0.03966576      417</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2    plate        TL    2          0.5        1.0   0.75 0.11899727      385</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3    plate        TL    3          1.0        1.5   1.25 0.19832878      354</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4    plate        TL    4          1.5        2.0   1.75 0.27766029      284</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5    plate        TL    5          2.0        2.5   2.25 0.35699180      284</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6    plate        TL    6          2.5        3.0   2.75 0.43632331      256</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   n_blocks   L_mean     L_sd  MI_mean    MI_lo    MI_hi</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1      196 57.66587 7.269527 42.33413 41.47844 43.14261</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2      182 55.31990 5.355408 44.68010 43.89529 45.59058</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3      166 53.01708 5.384443 46.98292 46.10448 47.77234</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4      151 53.06358 5.463855 46.93642 46.26877 47.85056</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5      128 52.09379 5.306273 47.90621 46.99899 48.76120</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6      115 52.65288 5.141030 47.34712 46.42895 48.06207</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1      151 57.77047 8.906653 42.22953 41.39722 43.17539</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2      139 56.53281 4.026146 43.46719 42.91741 44.11771</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3      132 53.02993 3.342428 46.97007 46.32998 47.43156</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4      104 51.81034 3.691442 48.18966 47.39821 48.83253</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5      108 51.14082 4.359298 48.85918 48.03981 49.76930</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6       96 49.91173 4.864773 50.08827 49.12574 51.09368</span>
 </code></pre></div>
     </div>
   </div>

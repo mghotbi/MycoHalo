@@ -33,7 +33,7 @@ Config/testthat/edition: 3
 URL: https://github.com/mghotbi/MycoHalo
 BugReports: https://github.com/mghotbi/MycoHalo/issues
 NeedsCompilation: yes
-Packaged: 2026-09-27 11:15:34 UTC; root
+Packaged: 2026-09-27 12:44:46 UTC; root
 Author: Mitra Ghotbi [aut, cre] (<https://orcid.org/0000-0001-9185-9993>)
 Maintainer: Mitra Ghotbi <mitra.ghotbi@gmail.com>
 Config/roxygen2/version: 8.1.0

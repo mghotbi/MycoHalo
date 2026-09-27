@@ -111,3 +111,19 @@ test_that("melanization landscape renders", {
   expect_true(file.exists(f))
   expect_length(out$mi_range, 2)
 })
+
+test_that("no side effects: RNG stream, graphics settings, working directory", {
+  set.seed(123); before <- .Random.seed
+  wd_files <- list.files(getwd(), all.files = TRUE, recursive = FALSE)
+  sim <- small(seed = 12)
+  res <- analyze_plate(sim$image, verbose = FALSE)
+  expect_identical(.Random.seed, before)          # user's random stream untouched
+  f <- tempfile(fileext = ".png")
+  grDevices::png(f, 1200, 700)
+  mar0 <- graphics::par("mar")
+  plot_qc(res); plot_melanization_map(res, grid = 60)
+  expect_equal(graphics::par("mar"), mar0)        # graphics settings restored
+  grDevices::dev.off()
+  unlink(f)
+  expect_setequal(list.files(getwd(), all.files = TRUE, recursive = FALSE), wd_files)
+})

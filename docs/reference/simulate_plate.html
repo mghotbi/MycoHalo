@@ -182,7 +182,8 @@ the centre is darker (simulated localized melanization response).</p></dd>
 
 
 <dt id="arg-seed">seed<a class="anchor" aria-label="anchor" href="#arg-seed"></a></dt>
-<dd><p>Random seed.</p></dd>
+<dd><p>Random seed. The user's random-number stream is restored
+afterwards.</p></dd>
 
 </dl></div>
     <div id="value">
@@ -195,16 +196,16 @@ region).</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">sim</span> <span class="op">&lt;-</span> <span class="fu">simulate_plate</span><span class="op">(</span>seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">sim</span> <span class="op">&lt;-</span> <span class="fu">simulate_plate</span><span class="op">(</span>width <span class="op">=</span> <span class="fl">300</span>, height <span class="op">=</span> <span class="fl">400</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">show</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">a</span><span class="op">)</span> <span class="op">{</span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/grDevices/as.raster.html" class="external-link">as.raster</a></span><span class="op">(</span><span class="va">a</span><span class="op">)</span><span class="op">)</span> <span class="op">}</span></span></span>
 <span class="r-in"><span><span class="fu">show</span><span class="op">(</span><span class="va">sim</span><span class="op">$</span><span class="va">image</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="simulate_plate-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="va">sim</span><span class="op">$</span><span class="va">truth</span><span class="op">$</span><span class="va">colonies</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   colony_id        x        y area_mm2   L_mean  MI_mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1        TL 271.0363 421.0363 154.5793 52.21610 47.78390</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2        TR 629.9637 421.0363 154.3947 47.11494 52.88506</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3        BR 629.9637 779.9637 154.4774 40.93051 59.06949</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4        BL 271.0363 779.9637 154.3756 58.70149 41.29851</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   colony_id         x        y area_mm2   L_mean  MI_mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1        TL  90.67877 140.6788 154.2355 52.95687 47.04313</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2        TR 210.32123 140.6788 154.4074 47.11511 52.88489</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3        BR 210.32123 260.3212 154.2355 42.20366 57.79634</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4        BL  90.67877 260.3212 154.5220 59.18494 40.81506</span>
 </code></pre></div>
     </div>
   </div>

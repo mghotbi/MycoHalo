@@ -43,7 +43,7 @@
 #'   }
 #'
 #' @examples
-#' sim <- simulate_plate(seed = 10)
+#' sim <- simulate_plate(width = 300, height = 400, seed = 10)
 #' res <- analyze_plate(sim$image, id = "sim10", verbose = FALSE)
 #' res
 #' res$colonies[, c("colony_id", "MI_mean", "delta_MI_facing")]
@@ -156,7 +156,9 @@ print.mycohalo_result <- function(x, ...) {
 #' @param layout A single [plate_layout()], or a function
 #'   `function(metadata_row)` returning the layout for each plate (e.g.
 #'   `centre = "none"` for controls).
-#' @param qc_dir Directory for QC PNGs (created if needed); `NULL` to skip.
+#' @param qc_dir Directory for QC PNGs (created if needed). The default
+#'   `NULL` writes nothing; give a folder, e.g. `qc_dir = "qc"`, to save one
+#'   QC figure per plate.
 #' @param ... Further arguments passed to [analyze_plate()].
 #' @param verbose Print progress.
 #'
@@ -172,7 +174,7 @@ print.mycohalo_result <- function(x, ...) {
 #' }
 #' @export
 analyze_plates <- function(files, metadata = NULL, layout = plate_layout(),
-                           qc_dir = "mycohalo_qc", ..., verbose = TRUE) {
+                           qc_dir = NULL, ..., verbose = TRUE) {
   if (length(files) == 1 && dir.exists(files)) {
     files <- list.files(files, pattern = "\\.(jpe?g|png|tiff?|heic)$",
                         ignore.case = TRUE, full.names = TRUE)

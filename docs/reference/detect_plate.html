@@ -137,26 +137,26 @@ and pass <code>mm_per_px</code>.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="simulate_plate.html">simulate_plate</a></span><span class="op">(</span>seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="simulate_plate.html">simulate_plate</a></span><span class="op">(</span>width <span class="op">=</span> <span class="fl">300</span>, height <span class="op">=</span> <span class="fl">400</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">plate</span> <span class="op">&lt;-</span> <span class="fu">detect_plate</span><span class="op">(</span><span class="fu"><a href="read_plate.html">read_plate</a></span><span class="op">(</span><span class="va">sim</span><span class="op">$</span><span class="va">image</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">plate</span><span class="op">$</span><span class="va">dish</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> List of 11</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ x               : Named num 450</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ x               : Named num 150</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..- attr(*, "names")= chr "x"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ y               : Named num 601</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ y               : Named num 200</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..- attr(*, "names")= chr "y"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ r_outer         : num 564</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ r_agar          : num 496</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ mm_per_px       : num 0.0798</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ r_outer         : num 188</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ r_agar          : num 165</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ mm_per_px       : num 0.239</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ scale_source    : chr "dish diameter"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ dish_diameter_mm: num 90</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ agar_fraction   : num 0.88</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ fit_rmse_px     : num 0.287</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ fit_rmse_px     : num 0.29</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ arc_coverage    : num 0.611</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ method          : chr "auto"</span>
 <span class="r-in"><span><span class="va">sim</span><span class="op">$</span><span class="va">truth</span><span class="op">$</span><span class="va">dish</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     x     y     r </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 450.5 600.5 564.0 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 150.5 200.5 188.0 </span>
 </code></pre></div>
     </div>
   </div>

@@ -71,7 +71,7 @@
 #'   (0 agar/outside, 1 fungus, 2 bacteria, 3 halo, 4 other) and the fitted
 #'   model.
 #' @examples
-#' sim <- simulate_plate(seed = 4)
+#' sim <- simulate_plate(width = 300, height = 400, seed = 4)
 #' p <- read_plate(sim$image) |> detect_plate() |> model_background()
 #' p <- classify_pixels(p, plate_layout())
 #' table(p$classes$map)
@@ -359,7 +359,7 @@ sample_idx <- function(n, k) {
 #'   `"bacteria"`, `"halo"`), `x`, `y`, `r` in working-image pixels.
 #' @return Data frame of features with a `class` column.
 #' @examples
-#' sim <- simulate_plate(seed = 5)
+#' sim <- simulate_plate(width = 300, height = 400, seed = 5)
 #' p <- read_plate(sim$image) |> detect_plate() |> model_background()
 #' reg <- data.frame(class = c("fungus", "bacteria"),
 #'                   x = c(sim$truth$colonies$x[1], p$dish$x),
@@ -389,7 +389,7 @@ extract_training_pixels <- function(plate, regions) {
 #'   annotation effort rather than biology determines class frequencies).
 #' @return An object of class `mycohalo_classifier`.
 #' @examples
-#' sim <- simulate_plate(seed = 5)
+#' sim <- simulate_plate(width = 300, height = 400, seed = 5)
 #' p <- read_plate(sim$image) |> detect_plate() |> model_background()
 #' reg <- data.frame(class = c("fungus", "bacteria"),
 #'                   x = c(sim$truth$colonies$x[1], p$dish$x),

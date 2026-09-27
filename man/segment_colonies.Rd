@@ -83,7 +83,7 @@ of halo-class pixels connected to (within \code{halo_link_mm} of) the
 bacterium, excluding bacterial and fungal pixels.
 }
 \examples{
-sim <- simulate_plate(seed = 6)
+sim <- simulate_plate(width = 300, height = 400, seed = 6)
 p <- read_plate(sim$image) |> detect_plate() |> model_background() |>
   classify_pixels(plate_layout()) |> segment_colonies(plate_layout())
 p$objects$colony_table

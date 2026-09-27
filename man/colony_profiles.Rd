@@ -52,7 +52,7 @@ Choose \code{block_mm} at least as large as the wrinkle / texture scale
 (default 0.5 mm).
 }
 \examples{
-sim <- simulate_plate(seed = 8, edge_lightening = 8)
+sim <- simulate_plate(width = 300, height = 400, seed = 8, edge_lightening = 8)
 res <- analyze_plate(sim$image, verbose = FALSE)
 head(res$profiles)
 }

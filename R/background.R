@@ -63,7 +63,7 @@
 #'
 #' @return The plate with corrected `rgb`/`lab` and an element `bg`.
 #' @examples
-#' sim <- simulate_plate(seed = 3, vignetting = 0.3)
+#' sim <- simulate_plate(width = 300, height = 400, seed = 3, vignetting = 0.3)
 #' p <- detect_plate(read_plate(sim$image))
 #' p <- model_background(p)
 #' p$bg$agar_lab

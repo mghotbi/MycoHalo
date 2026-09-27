@@ -21,7 +21,7 @@ marked on a processed plate (see \code{\link[=annotate_plate]{annotate_plate()}}
 annotation).
 }
 \examples{
-sim <- simulate_plate(seed = 5)
+sim <- simulate_plate(width = 300, height = 400, seed = 5)
 p <- read_plate(sim$image) |> detect_plate() |> model_background()
 reg <- data.frame(class = c("fungus", "bacteria"),
                   x = c(sim$truth$colonies$x[1], p$dish$x),

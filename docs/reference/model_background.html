@@ -170,14 +170,14 @@ every colony.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="simulate_plate.html">simulate_plate</a></span><span class="op">(</span>seed <span class="op">=</span> <span class="fl">3</span>, vignetting <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="simulate_plate.html">simulate_plate</a></span><span class="op">(</span>width <span class="op">=</span> <span class="fl">300</span>, height <span class="op">=</span> <span class="fl">400</span>, seed <span class="op">=</span> <span class="fl">3</span>, vignetting <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="detect_plate.html">detect_plate</a></span><span class="op">(</span><span class="fu"><a href="read_plate.html">read_plate</a></span><span class="op">(</span><span class="va">sim</span><span class="op">$</span><span class="va">image</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu">model_background</span><span class="op">(</span><span class="va">p</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">p</span><span class="op">$</span><span class="va">bg</span><span class="op">$</span><span class="va">agar_lab</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          L          a          b </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22.2906650 -0.9049035 -3.8404587 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22.2716888 -0.9644315 -3.8346218 </span>
 <span class="r-in"><span><span class="va">p</span><span class="op">$</span><span class="va">bg</span><span class="op">$</span><span class="va">illumination_range_pct</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 28.51069</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 28.25772</span>
 </code></pre></div>
     </div>
   </div>

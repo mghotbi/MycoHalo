@@ -32,7 +32,8 @@
 #' @param main Title.
 #' @return Invisibly, a list with the MI matrix used and the colour ramp.
 #' @examples
-#' sim <- simulate_plate(seed = 42, facing_darkening = 5, edge_lightening = 8)
+#' sim <- simulate_plate(width = 300, height = 400, seed = 42,
+#'                      facing_darkening = 5, edge_lightening = 8)
 #' res <- analyze_plate(sim$image, verbose = FALSE)
 #' plot_melanization_map(res)
 #' @export
@@ -68,9 +69,9 @@ plot_melanization_map <- function(x, type = c("both", "3d", "2d"), mi_range = NU
   }
 
   if (is.null(main)) main <- paste("Melanization landscape -", p$id)
+  op <- graphics::par(no.readonly = TRUE)
+  on.exit(graphics::par(op), add = TRUE)
   if (type == "both") {
-    op <- graphics::par(no.readonly = TRUE)
-    on.exit(graphics::par(op), add = TRUE)
     graphics::layout(matrix(c(1, 2, 3, 3), 2, byrow = TRUE), heights = c(1, 0.09))
   }
   # crop to the analysed dish for both views

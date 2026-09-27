@@ -98,7 +98,7 @@ optional colour calibration, flat-field correction, colour/texture pixel
 classification, seeded colony separation, measurement and QC.
 }
 \examples{
-sim <- simulate_plate(seed = 10)
+sim <- simulate_plate(width = 300, height = 400, seed = 10)
 res <- analyze_plate(sim$image, id = "sim10", verbose = FALSE)
 res
 res$colonies[, c("colony_id", "MI_mean", "delta_MI_facing")]
