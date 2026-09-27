@@ -83,7 +83,7 @@ res <- analyze_plate(sim$image, id = "demo", verbose = FALSE)
 res
 ```
 
-```{r qc, fig.cap = "Quality-control figure. Left: detected dish (dashed), analysed agar disk (solid), expected inoculation points (+) with their search radius (dotted), colony outlines, bacterium (yellow), halo (orange), satellite (magenta). Right: pixel classes."}
+```{r qc, fig.cap = "Quality-control figure. Left: detected dish (dashed), analysed agar disk (solid), expected inoculation points (+) with their search radius (dotted), colony outlines (one colour per colony), bacterium (yellow), halo (orange), satellites and debris (white). Right: pixel classes; each separated colony is filled with the same colour as its outline. Legends are below the panels."}
 plot_qc(res)
 ```
 

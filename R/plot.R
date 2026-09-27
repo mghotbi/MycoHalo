@@ -4,7 +4,8 @@
 #' shows the (flat-field corrected) photograph with the detected dish, the
 #' analysed agar disk, expected inoculation points and search radii, colony
 #' outlines, the bacterium and its halo; the right panel shows the pixel
-#' classification.
+#' classification, with each separated colony filled in its own colour (same
+#' colours as the outlines on the left).
 #'
 #' @param x A `mycohalo_result` (computed with `keep_images = TRUE`).
 #' @param panels Which panels to draw.
@@ -16,8 +17,8 @@
 #' plot_qc(res)
 #' @export
 plot_qc <- function(x, panels = c("overlay", "classes"),
-                    colony_cols = c("#00E5FF", "#FF4081", "#76FF03", "#FFD740",
-                                    "#E040FB", "#FF6E40", "#40C4FF", "#B2FF59")) {
+                    colony_cols = c("#1FB5E0", "#D6336C", "#3FA34D", "#7B5CD6",
+                                    "#00897B", "#F48FB1", "#8D6E63", "#5C6BC0")) {
   if (!inherits(x, "mycohalo_result") || is.null(x$plate)) {
     cli::cli_abort("{.arg x} must be a {.cls mycohalo_result} computed with {.code keep_images = TRUE}.")
   }
@@ -26,7 +27,7 @@ plot_qc <- function(x, panels = c("overlay", "classes"),
   d <- p$dish
   H <- dim(p$rgb)[1]; W <- dim(p$rgb)[2]
   ncol_ <- length(panels)
-  op <- graphics::par(mfrow = c(1, ncol_), mar = c(0.5, 0.5, 2.5, 0.5), bg = "white")
+  op <- graphics::par(mfrow = c(1, ncol_), mar = c(6.5, 0.5, 2.5, 0.5), bg = "white")
   on.exit(graphics::par(op), add = TRUE)
   ct <- ob$colony_table
   col_rgb <- grDevices::col2rgb(colony_cols) / 255
@@ -49,7 +50,7 @@ plot_qc <- function(x, panels = c("overlay", "classes"),
     for (i in which(ct$detected)) {
       img <- paint(img, outline(ob$labels == i), col_rgb[, (i - 1) %% ncol(col_rgb) + 1])
     }
-    if (any(ob$satellites)) img <- paint(img, outline(ob$satellites), c(1, 0, 1))
+    if (any(ob$satellites)) img <- paint(img, outline(ob$satellites), c(1, 1, 1))
     if (any(ob$halo)) img <- paint(img, outline(ob$halo | ob$bacteria), c(1, 0.6, 0))
     if (any(ob$bacteria)) img <- paint(img, outline(ob$bacteria), c(1, 1, 0.2))
     show_rgb(img, main = sprintf("%s  |  %.4f mm/px", p$id, d$mm_per_px))
@@ -74,11 +75,14 @@ plot_qc <- function(x, panels = c("overlay", "classes"),
       graphics::text(cl$centroid_x_px[i], cl$centroid_y_px[i], lbl, col = "black", font = 2, cex = 0.95)
       graphics::text(cl$centroid_x_px[i] - 1.5, cl$centroid_y_px[i] - 1.5, lbl, col = "white", font = 2, cex = 0.95)
     }
-    graphics::legend("bottomleft", bg = grDevices::adjustcolor("white", 0.8), box.col = NA, cex = 0.75,
+    det <- which(ct$detected)
+    ccols <- colony_cols[(det - 1) %% length(colony_cols) + 1]
+    graphics::legend("bottom", inset = c(0, -0.2), xpd = NA, bty = "n", cex = 0.8, ncol = 3,
                      legend = c("dish edge", "analysed agar", "expected position / search",
-                                "bacterium", "halo", "satellite"),
-                     col = c("#00B8D4", "#00B8D4", "grey70", "#FFFF33", "#FF9900", "magenta"),
-                     lty = c(2, 1, 3, 1, 1, 1), lwd = 2)
+                                "bacterium", "halo", "satellite / debris (white, excluded)",
+                                paste("colony", ct$id[det])),
+                     col = c("#00B8D4", "#00B8D4", "grey55", "#E6D200", "#FF9900", "grey80", ccols),
+                     lty = c(2, 1, 3, rep(1, 3 + length(det))), lwd = 2.5)
   }
   if ("classes" %in% panels) {
     img <- array(0, c(H, W, 3))
@@ -91,12 +95,16 @@ plot_qc <- function(x, panels = c("overlay", "classes"),
     img <- paint(img, cmap == 4L, c(0.9, 0.1, 0.1))
     if (!is.null(p$bg$shadow)) img <- paint(img, p$bg$shadow, c(0.10, 0.16, 0.45))
     for (i in which(ct$detected)) {
-      img <- paint(img, ob$labels == i, col_rgb[, (i - 1) %% ncol(col_rgb) + 1] * 0.8)
+      img <- paint(img, ob$labels == i, col_rgb[, (i - 1) %% ncol(col_rgb) + 1])
     }
     show_rgb(img, main = sprintf("Pixel classes (%s)", p$classes$source))
-    graphics::legend("bottomleft", bg = grDevices::adjustcolor("white", 0.8), box.col = NA, cex = 0.75,
-                     legend = c("agar", "fungus (unassigned)", "bacteria", "halo", "other", "cast shadow"),
-                     fill = c("#40454D", "#8C8C8C", "#FAF2D9", "#D9B326", "#E61A1A", "#1A2973"))
+    det <- which(ct$detected)
+    ccols <- colony_cols[(det - 1) %% length(colony_cols) + 1]
+    graphics::legend("bottom", inset = c(0, -0.2), xpd = NA, bty = "n", cex = 0.8, ncol = 3,
+                     legend = c("agar", "fungus, not a colony", "bacterium", "halo", "other",
+                                "cast shadow", paste("colony", ct$id[det])),
+                     fill = c("#40454D", "#8C8C8C", "#FAF2D9", "#D9B326", "#E61A1A", "#1A2973", ccols),
+                     border = "grey30")
   }
   invisible(x)
 }
