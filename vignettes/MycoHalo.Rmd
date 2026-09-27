@@ -88,16 +88,19 @@ plot_qc(res)
 ```
 
 **Always look at the QC figure** before using the numbers. It is also saved
-automatically for every plate in batch mode.
+for every plate in batch mode when you give `qc_dir`.
 
-For real files:
+For your own photographs, replace the paths below with the full paths of
+your files (this chunk is a template and is not run here; to try the
+package on real data right away, use the shipped plates in the next
+section):
 
 ```{r real, eval = FALSE}
 # confrontation plate: 4 Zymoseptoria + central bacterium (default layout)
-res <- analyze_plate("plates/2026_05_26_20.JPG",
-                     reference = c(0.08, 0.92, 0.03))   # grey card, bottom-left
+res <- analyze_plate("/path/to/your/confrontation_plate.jpg",
+                     reference = c(0.08, 0.92, 0.03))   # only if a grey card is in the photo
 # control plate: same layout, no bacterium
-ctrl <- analyze_plate("plates/2026_05_26_37.JPG",
+ctrl <- analyze_plate("/path/to/your/control_plate.jpg",
                       layout = plate_layout(centre = "none"))
 ```
 
