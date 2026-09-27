@@ -2,44 +2,75 @@
 % Please edit documentation in R/detect_plate.R
 \name{detect_plate}
 \alias{detect_plate}
-\title{Detect Petri dish}
+\title{Detect the Petri dish and set the spatial scale}
 \usage{
-detect_plate(plate, threshold = 0.25)
+detect_plate(
+  plate,
+  dish = NULL,
+  dish_diameter_mm = 90,
+  agar_fraction = 0.88,
+  background = c("auto", "dark", "light"),
+  mm_per_px = NULL,
+  seed = 1L
+)
 }
 \arguments{
-\item{plate}{A \code{mycohalo_plate} object.}
+\item{plate}{A \code{mycohalo_plate} from \code{\link[=read_plate]{read_plate()}}.}
 
-\item{threshold}{Numeric threshold between 0 and 1.}
+\item{dish}{Optional manual circle \code{c(x, y, r)} in working-image pixels;
+skips detection.}
+
+\item{dish_diameter_mm}{Physical outer diameter of the dish (mm).}
+
+\item{agar_fraction}{Fraction of the outer radius analysed (0-1).}
+
+\item{background}{\code{"auto"}, \code{"dark"} or \code{"light"} photographic background.}
+
+\item{mm_per_px}{Optional scale (mm per \emph{working-image} pixel), e.g. from
+a ruler photographed with the plates; overrides \code{dish_diameter_mm}.
+Note: if you measured the scale on the original file, multiply by
+\code{1 / plate$resize_factor}.}
+
+\item{seed}{RNG seed for RANSAC (results are deterministic by default).}
 }
 \value{
-Updated \code{mycohalo_plate} object.
+The plate with element \code{dish}: a list with \code{x}, \code{y}, \code{r_outer},
+\code{r_agar} (px), \code{mm_per_px}, \code{fit_rmse_px}, \code{arc_coverage} and \code{method}.
 }
 \description{
-Detect the Petri dish region from a fungal plate image.
+Locates the dish as a circle and derives the pixel-to-millimetre scale
+from its known physical diameter.
 }
 \details{
-The function:
-
+\strong{Algorithm.}
 \enumerate{
-\item Converts the image to grayscale.
-\item Applies intensity thresholding.
-\item Labels connected components.
-\item Selects the largest connected component.
-\item Stores the resulting plate mask and summary statistics.
+\item The background (e.g. black paper) lightness is estimated from the
+four image corners, which lie outside a round dish, as the median
+\eqn{L^*} with a robust (MAD) noise estimate \eqn{\sigma}.
+\item Pixels brighter than \verb{median + max(6 sigma, 3)} (dark background)
+or darker than \verb{median - max(6 sigma, 3)} (light background) form the
+foreground; it is cleaned by a morphological opening, the largest
+connected component is kept and its holes filled.
+\item Boundary pixels of that region, excluding those on the image
+border (dishes are often cropped at the sides), are fitted with a
+circle by RANSAC (Fischler & Bolles 1981) followed by an algebraic
+least-squares refinement (Kasa 1976) on the inliers. Partial arcs
+are therefore handled correctly.
 }
+The analysed agar disk has radius \code{agar_fraction * r_outer}, which
+excludes the dish wall, its reflections and the agar meniscus.
+
+\strong{Scale.} \code{mm_per_px = dish_diameter_mm / (2 * r_outer)}, where
+\code{r_outer} is the radius of the edge that was \emph{detected}. Depending on
+lighting this is the outer rim of the dish or the inner wall / agar edge,
+so check the dashed circle in \code{\link[=plot_qc]{plot_qc()}} once for your photo set-up and
+measure \emph{that} diameter with calipers (standard "90 mm" dishes are
+~88-90 mm outside and ~85-86 mm inside). Alternatively photograph a ruler
+and pass \code{mm_per_px}.
 }
 \examples{
-\dontrun{
-
-plate <- read_plate(
-  "plate.jpg"
-)
-
-plate <- detect_plate(
-  plate,
-  threshold = 0.25
-)
-
-}
-
+sim <- simulate_plate(seed = 1)
+plate <- detect_plate(read_plate(sim$image))
+str(plate$dish)
+sim$truth$dish
 }

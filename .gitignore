@@ -1,0 +1,11 @@
+.Rproj.user
+.Rhistory
+.RData
+.httr-oauth
+.DS_Store
+.quarto
+src/*.o
+src/*.so
+src/*.dll
+mycohalo_qc/
+*.tar.gz

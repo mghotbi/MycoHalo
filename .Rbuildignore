@@ -1,0 +1,14 @@
+^MycoHalo\.Rproj$
+^\.Rproj\.user$
+^LICENSE\.md$
+^README\.Rmd$
+^\.github$
+^validation$
+^inst/extdata/.*\.(JPG|jpg|jpeg)$
+^_old_prototype
+^confrontaR_results$
+^mycohalo_qc$
+^MycoHalo_vignette\.html$
+^.*\.tar\.gz$
+^docs$
+^_pkgdown\.yml$

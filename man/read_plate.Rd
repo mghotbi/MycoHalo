@@ -2,26 +2,58 @@
 % Please edit documentation in R/read_plate.R
 \name{read_plate}
 \alias{read_plate}
-\title{Read a plate image}
+\title{Read a plate photograph}
 \usage{
-read_plate(path)
+read_plate(path, max_dim = 2000, id = NULL)
 }
 \arguments{
-\item{path}{Character scalar.
-Path to an image file.}
+\item{path}{Path to an image file, \strong{or} a numeric H x W x 3 array with
+sRGB values in [0, 1] (e.g. from \code{\link[=simulate_plate]{simulate_plate()}}).}
+
+\item{max_dim}{Maximum size (px) of the longest image side used for
+analysis. Default 2000.}
+
+\item{id}{Optional plate identifier; defaults to the file name without
+extension.}
 }
 \value{
-A \code{mycohalo_plate} object.
+An object of class \code{mycohalo_plate}: a list with
+\describe{
+\item{rgb}{H x W x 3 array of sRGB values in [0, 1].}
+\item{lab}{H x W x 3 array of CIELAB values.}
+\item{id, path}{Identifier and source path.}
+\item{original_dim}{Width and height of the file (px).}
+\item{resize_factor}{Working px per original px.}
+\item{clipped_fraction}{Fraction of pixels with a channel at 255.}
+}
 }
 \description{
-Import a fungal colony plate image and create a
-MycoHalo plate object.
+Imports a plate image (JPEG, PNG, TIFF, HEIC ... anything ImageMagick
+reads), applies the EXIF orientation, optionally down-samples it to a
+working resolution and converts it to CIELAB.
+}
+\details{
+\strong{Working resolution.} Segmentation and colour statistics are computed on
+an image whose longest side is at most \code{max_dim} pixels. For a 90 mm dish
+photographed so that it fills the frame, \code{max_dim = 2000} gives roughly
+0.05 mm per pixel, i.e. a 1 cm colony is described by ~30 000 pixels —
+far more than needed for sub-percent precision of mean colour and ~1 \%
+precision of area. Down-sampling uses an anti-aliasing (area-averaging)
+filter, so it \emph{reduces} JPEG block noise without biasing mean colour.
+Use \code{max_dim = Inf} to keep the native resolution.
+
+\strong{Clipping.} Pixels with any channel at 255 carry no colour
+information (the sensor was saturated). Their fraction is stored and
+\code{\link[=analyze_plate]{analyze_plate()}} warns if colonies contain clipped pixels. Photograph
+with manual exposure so that the brightest bacterial growth stays below
+~ 245.
 }
 \examples{
-\dontrun{
-plate <- read_plate(
-  "inst/extdata/control/control_01.jpg"
-)
-}
+sim <- simulate_plate(seed = 1)
+plate <- read_plate(sim$image, id = "sim1")
+plate
 
+}
+\seealso{
+\code{\link[=analyze_plate]{analyze_plate()}}, \code{\link[=calibrate_color]{calibrate_color()}}
 }
