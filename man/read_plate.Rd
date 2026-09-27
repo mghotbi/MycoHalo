@@ -49,7 +49,7 @@ with manual exposure so that the brightest bacterial growth stays below
 ~ 245.
 }
 \examples{
-sim <- simulate_plate(seed = 1)
+sim <- simulate_plate(width = 300, height = 400, seed = 1)
 plate <- read_plate(sim$image, id = "sim1")
 plate
 

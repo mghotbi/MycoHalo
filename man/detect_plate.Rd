@@ -69,7 +69,7 @@ measure \emph{that} diameter with calipers (standard "90 mm" dishes are
 and pass \code{mm_per_px}.
 }
 \examples{
-sim <- simulate_plate(seed = 1)
+sim <- simulate_plate(width = 300, height = 400, seed = 1)
 plate <- detect_plate(read_plate(sim$image))
 str(plate$dish)
 sim$truth$dish

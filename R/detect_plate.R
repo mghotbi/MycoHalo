@@ -46,7 +46,7 @@
 #'   `r_agar` (px), `mm_per_px`, `fit_rmse_px`, `arc_coverage` and `method`.
 #'
 #' @examples
-#' sim <- simulate_plate(seed = 1)
+#' sim <- simulate_plate(width = 300, height = 400, seed = 1)
 #' plate <- detect_plate(read_plate(sim$image))
 #' str(plate$dish)
 #' sim$truth$dish
@@ -197,14 +197,11 @@ kasa_fit <- function(x, y) {
 #' @noRd
 ransac_circle <- function(x, y, tol, n_iter = 400L, seed = 1L) {
   n <- length(x)
-  if (!is.null(seed)) {
-    old <- if (exists(".Random.seed", envir = globalenv())) get(".Random.seed", envir = globalenv()) else NULL
-    on.exit(if (!is.null(old)) assign(".Random.seed", old, envir = globalenv()), add = TRUE)
-    set.seed(seed)
-  }
   best <- NULL; best_n <- 0L
+  draws <- with_seed(if (is.null(seed)) sample.int(1e6, 1) else seed,
+                     replicate(n_iter, sample.int(n, 3), simplify = FALSE))
   for (i in seq_len(n_iter)) {
-    s <- sample.int(n, 3)
+    s <- draws[[i]]
     cc <- circle3(x[s], y[s])
     if (is.null(cc) || !is.finite(cc[3])) next
     d <- abs(sqrt((x - cc[1])^2 + (y - cc[2])^2) - cc[3])

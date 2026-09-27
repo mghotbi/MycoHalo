@@ -38,7 +38,7 @@
 #'   }
 #'
 #' @examples
-#' sim <- simulate_plate(seed = 1)
+#' sim <- simulate_plate(width = 300, height = 400, seed = 1)
 #' plate <- read_plate(sim$image, id = "sim1")
 #' plate
 #'
@@ -170,7 +170,7 @@ print.mycohalo_plate <- function(x, ...) {
 #' @param ref_lab Known CIELAB of the patch (default neutral `c(50, 0, 0)`).
 #' @return The calibrated `mycohalo_plate` (with `$calibration` gains).
 #' @examples
-#' sim <- simulate_plate(seed = 2, exposure = 0.8, grey_card = TRUE)
+#' sim <- simulate_plate(width = 300, height = 400, seed = 2, exposure = 0.8, grey_card = TRUE)
 #' plate <- read_plate(sim$image)
 #' plate <- calibrate_color(plate, region = sim$truth$grey_card)
 #' @export
