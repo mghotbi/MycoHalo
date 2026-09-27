@@ -3,7 +3,6 @@
 <!-- badges: start -->
 
 [![version](https://img.shields.io/github/r-package/v/mghotbi/MycoHalo?style=flat-square&label=version&color=8D6E63&labelColor=2B1D16)](https://github.com/mghotbi/MycoHalo/blob/HEAD/NEWS.md)
-[![lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-C9971C?style=flat-square&labelColor=2B1D16)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![R >= 4.1](https://img.shields.io/badge/R-%E2%89%A5%204.1-276DC3?style=flat-square&logo=r&logoColor=white&labelColor=2B1D16)](https://www.r-project.org/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-E9CF7A?style=flat-square&labelColor=2B1D16)](https://github.com/mghotbi/MycoHalo/blob/HEAD/LICENSE)
 
