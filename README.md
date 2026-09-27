@@ -1,7 +1,7 @@
 # MycoHalo <img src="man/figures/logo.png" align="right" height="139" alt="MycoHalo hex logo: four smiling Zymoseptoria colonies around a bacterium and its golden halo" />
 
 <!-- badges: start -->
-[![R-CMD-check](https://github.com/mghotbi/MycoHalo/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/mghotbi/MycoHalo/actions/workflows/R-CMD-check.yaml)
+
 [![version](https://img.shields.io/github/r-package/v/mghotbi/MycoHalo?style=flat-square&label=version&color=8D6E63&labelColor=2B1D16)](https://github.com/mghotbi/MycoHalo/blob/HEAD/NEWS.md)
 [![lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-C9971C?style=flat-square&labelColor=2B1D16)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![R >= 4.1](https://img.shields.io/badge/R-%E2%89%A5%204.1-276DC3?style=flat-square&logo=r&logoColor=white&labelColor=2B1D16)](https://www.r-project.org/)
