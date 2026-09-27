@@ -2,23 +2,29 @@
 % Please edit documentation in R/example_plate.R
 \name{example_plate}
 \alias{example_plate}
-\title{Load example plate image}
+\title{Paths to the example plate photographs shipped with MycoHalo}
 \usage{
-example_plate(type = c("control", "confrontation"))
+example_plate(type = c("confrontation", "control", "all"))
 }
 \arguments{
-\item{type}{Character scalar.
-Either \code{"control"} or \code{"confrontation"}.}
+\item{type}{\code{"confrontation"}, \code{"control"} or \code{"all"}.}
 }
 \value{
-A \code{mycohalo_plate} object.
+File path(s).
 }
 \description{
-Load an example image distributed with MycoHalo.
+Two real photographs of \emph{Zymoseptoria tritici} (four colonies per dish),
+reduced to 1000 px for size:
+\describe{
+\item{\code{"confrontation"}}{four colonies around a central bacterium with a
+diffusion halo (original: 2026_05_26_20.JPG).}
+\item{\code{"control"}}{four colonies without bacterium
+(original: 2026_05_26_37.JPG).}
+}
 }
 \examples{
-\dontrun{
-plate <- example_plate("control")
+example_plate("control")
+\donttest{
+res <- analyze_plate(example_plate("control"), layout = plate_layout(centre = "none"))
 }
-
 }
