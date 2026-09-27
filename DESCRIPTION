@@ -1,38 +1,39 @@
 Package: MycoHalo
-Title: Quantification of Fungal Melanization and Interaction Halos
-Version: 0.0.0.9000
-Authors@R:
-    person(
-      given = "Mitra",
-      family = "Ghotbi",
-      role = c("aut", "cre"),
-      email = "mitra.ghotbir@gemail.com"
-    )
-Description:
-    Tools for automated analysis of fungal colony images,
-    including colony segmentation, melanization quantification,
-    radial pigmentation profiling, halo detection, and
-    microbial confrontation assays. The package provides
-    reproducible workflows for measuring grayscale intensity,
-    melanization indices, spatial pigmentation gradients,
-    and interaction-associated phenotypes from digital images.
+Title: Colour-Calibrated Quantification of Fungal Melanization in
+        Confrontation Assays
+Version: 0.1.0
+Authors@R: 
+    person("Mitra", "Ghotbi", email = "mitra.ghotbi@gmail.com",
+           role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0001-9185-9993"))
+Description: Image analysis of Petri-dish photographs for quantifying
+    melanization of fungal colonies (developed for 'Zymoseptoria tritici')
+    grown at fixed inoculation positions, alone or confronted with a
+    bacterium. Pixels are analysed in the CIE 1976 L*a*b* colour space
+    after flat-field illumination correction, so that grey fungal colonies,
+    whitish bacterial colonies and yellowish diffusion halos, which overlap
+    in grayscale, are separated by a layout-initialised Gaussian mixture of
+    colour and texture. Individual colonies sharing one dish are separated
+    by a marker-controlled watershed seeded at the known inoculation points.
+    The package reports colony size and shape, melanization indices with
+    spatial block-bootstrap confidence intervals, edge-to-centre profiles,
+    side-specific (facing versus away from the bacterium) melanization,
+    growth inhibition, halo geometry and quality-control figures, and
+    provides a plate simulator with known ground truth for validation.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-Depends:
-    R (>= 4.3.0)
-Imports:
-    cli,
-    EBImage,
-    dplyr,
-    ggplot2,
-    magick,
-    purrr,
-    tibble
-Suggests:
-    testthat (>= 3.0.0),
-    knitr,
-    rmarkdown
+Depends: R (>= 4.1.0)
+Imports: cli, graphics, grDevices, magick, Rcpp, stats, tools, utils
+LinkingTo: Rcpp
+Suggests: ggplot2, knitr, lme4, rmarkdown, png, testthat (>= 3.0.0),
+        withr
+VignetteBuilder: knitr
 Config/testthat/edition: 3
-LazyData: true
-Config/roxygen2/version: 8.0.0
+URL: https://github.com/mghotbi/MycoHalo
+BugReports: https://github.com/mghotbi/MycoHalo/issues
+NeedsCompilation: yes
+Packaged: 2026-09-27 11:15:34 UTC; root
+Author: Mitra Ghotbi [aut, cre] (<https://orcid.org/0000-0001-9185-9993>)
+Maintainer: Mitra Ghotbi <mitra.ghotbi@gmail.com>
+Config/roxygen2/version: 8.1.0

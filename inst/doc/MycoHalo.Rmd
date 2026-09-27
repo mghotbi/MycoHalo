@@ -1,0 +1,465 @@
+---
+title: "MycoHalo: measuring melanization in fungus–bacterium confrontation plates"
+author: "Mitra Ghotbi"
+output:
+  rmarkdown::html_vignette:
+    toc: true
+vignette: >
+  %\VignetteIndexEntry{MycoHalo: measuring melanization in fungus–bacterium confrontation plates}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 9, fig.height = 4.7,
+                      dpi = 60, dev = "jpeg", out.width = "100%")
+library(MycoHalo)
+```
+
+## 1. The problem MycoHalo solves
+
+In our confrontation assay, four *Zymoseptoria tritici* colonies grow at
+fixed positions in the four quadrants of a Petri dish. On treatment plates a
+bacterium sits in the centre. We want to know whether, and where, the fungus
+changes its **melanization** when it interacts with the bacterium.
+
+Measuring this on a *grayscale* image fails for three reasons:
+
+1. **Grey on grey.** Colonies of *Z. tritici* range from almost white
+   (yeast-like, unmelanized) through grey to black (DHN-melanized hyphae).
+   The bacterial colony is whitish-cream and its diffusion halo is pale
+   yellow. In grayscale all of these share the same brightness range, so a
+   single threshold cannot separate fungus, bacterium and halo.
+2. **Several cultures in one dish.** Four colonies, one bacterium and a
+   halo share the same agar. Colonies can touch each other, grow into the
+   halo, or throw off satellite micro-colonies, so "the largest bright blob"
+   is not a colony.
+3. **Dark on dark.** Strongly melanized, wrinkled colonies on dark agar
+   have almost the *same mean colour* as the agar. They differ in surface
+   *texture* (ridges and valleys), not in average brightness.
+
+MycoHalo solves these with (i) calibrated colour (CIELAB) instead of gray,
+(ii) texture, (iii) a model of the agar background and of the lighting, and
+(iv) the *known inoculation layout* as a spatial prior for separating the
+cultures.
+
+## 2. Photographing plates (this decides your precision)
+
+Image analysis cannot recover information that the photograph does not
+contain. The following protocol typically halves plate-to-plate technical
+variation.
+
+* **Fixed geometry.** Use a copy stand, and keep the camera height, lens and
+  zoom the same for the whole experiment. Shoot the dish without its lid
+  (lids cause reflections and condensation) and perpendicular to the lens.
+* **Uniform, diffuse light.** Two lights at 45° on either side, or a light
+  box. Avoid a single ring light on the lens axis, which puts specular
+  highlights on wrinkled colonies. MycoHalo corrects smooth illumination
+  gradients (flat-field), but it cannot correct highlights.
+* **Manual exposure and white balance.** Switch off auto-exposure and auto
+  white balance, or every photo gets a different colour scale. Expose so that
+  the brightest bacterial growth stays below about 245 out of 255. Save RAW or
+  high-quality JPEG in the sRGB colour space.
+* **A grey card in every photo.** Put a small 18 % grey card (L\* ≈ 50) or a
+  ColorChecker next to the dish, under the same light. Passing its position
+  to `analyze_plate(reference = ...)` removes exposure and white-balance
+  differences between photographs, days and cameras. In the simulations this
+  cut the error in absolute melanization from ~7 L\* units to < 0.2.
+* **Orientation.** Put a pen mark on the dish at 12 o'clock and always
+  photograph with the mark at the top, so colony IDs (TL, TR, BR, BL) always
+  mean the same inoculation point.
+* **Dark matte background** (black velvet or card) under the dish. This makes
+  dish detection trivial.
+* **Scale.** Measure once, with calipers, the diameter of the dish edge that
+  MycoHalo detects (see the dashed circle in the QC figure), or put a ruler in
+  the photo and pass `mm_per_px`.
+
+## 3. Quick start
+
+```{r quick}
+# A simulated confrontation plate (replace with your file path)
+sim <- simulate_plate(seed = 42, facing_darkening = 4)
+res <- analyze_plate(sim$image, id = "demo", verbose = FALSE)
+res
+```
+
+```{r qc, fig.cap = "Quality-control figure. Left: detected dish (dashed), analysed agar disk (solid), expected inoculation points (+) with their search radius (dotted), colony outlines, bacterium (yellow), halo (orange), satellite (magenta). Right: pixel classes."}
+plot_qc(res)
+```
+
+**Always look at the QC figure** before using the numbers. It is also saved
+automatically for every plate in batch mode.
+
+For real files:
+
+```{r real, eval = FALSE}
+# confrontation plate: 4 Zymoseptoria + central bacterium (default layout)
+res <- analyze_plate("plates/2026_05_26_20.JPG",
+                     reference = c(0.08, 0.92, 0.03))   # grey card, bottom-left
+# control plate: same layout, no bacterium
+ctrl <- analyze_plate("plates/2026_05_26_37.JPG",
+                      layout = plate_layout(centre = "none"))
+```
+
+### Real plates shipped with the package
+
+Two of our photographs travel with the package (`inst/extdata/`), so the
+whole pipeline can be tried on real data:
+
+```{r real-plates, fig.width = 10, fig.height = 5.6}
+treat <- analyze_plate(example_plate("confrontation"), verbose = FALSE)
+ctrl  <- analyze_plate(example_plate("control"),
+                       layout = plate_layout(centre = "none"), verbose = FALSE)
+rbind(cbind(plate = "bacteria", treat$colonies[, c("colony_id", "area_mm2", "MI_mean")]),
+      cbind(plate = "control",  ctrl$colonies[,  c("colony_id", "area_mm2", "MI_mean")]))
+plot_qc(treat)
+plot_melanization_map(treat, mi_range = c(35, 85), main = "Zymoseptoria + bacterium")
+plot_melanization_map(ctrl,  mi_range = c(35, 85), main = "Zymoseptoria control")
+```
+
+Your own photos go in any folder on your computer. Only example data
+belongs inside the package, in `inst/extdata/`, never in a top-level folder.
+
+### Metadata and batch processing
+
+A whole experiment is analysed from a folder of photos plus a small
+metadata sheet: one row per photo. `make_metadata()` writes that sheet for
+you, and you only fill in what differs between plates. The `treatment`
+column decides the layout: `"control"` plates are analysed without a
+central bacterium.
+
+```{r metadata, eval = FALSE}
+# 1. create the sheet (file names containing "ctrl" become controls)
+make_metadata("photos",
+              treatment = "bacteria",
+              patterns  = c(control = "ctrl|control"),
+              extra     = list(bacterium = "isolate_X", zymo_strain = "strain_Y", day = 7))
+# -> photos/plate_metadata.csv:
+#    file, plate_id, treatment, bacterium, zymo_strain, medium, day, replicate, photo_date, notes
+
+# 2. fix / complete it in Excel or in R, e.g.
+meta <- read.csv("photos/plate_metadata.csv")
+meta$treatment[meta$file == "2026_05_26_37.JPG"] <- "control"
+write.csv(meta, "photos/plate_metadata.csv", row.names = FALSE, na = "")
+
+# 3. analyse everything; the layout follows the treatment column
+out <- analyze_plates("photos", metadata = meta, layout = layout_by_treatment,
+                      qc_dir = "qc", reference = c(0.08, 0.92, 0.03))
+out$colonies <- correct_facing_bias(out$colonies)   # lighting bias from controls
+
+write.csv(out$colonies, "colonies.csv", row.names = FALSE)
+compare_melanization(out$colonies, group = "treatment", reference = "control")
+```
+
+Several bacteria in one experiment? Put the isolate in `bacterium` and use
+it as the group (`compare_melanization(out$colonies, group = "bacterium")`),
+with the controls coded as `"none"`. The same columns are available for
+day, strain or medium. The script
+`system.file("scripts", "analyse_experiment.R", package = "MycoHalo")` does
+all of this in four steps.
+
+**Directional light.** A raised colony is always brighter on the side facing
+the lamp, and it casts a shadow on the other side. MycoHalo detects and
+removes the cast shadows (dark, smooth and agar-coloured). The remaining
+brightness asymmetry depends only on where the colony sits in the frame,
+so `correct_facing_bias()` subtracts, for each position (TL, TR, BR, BL),
+the mean `delta_MI_facing` of the control plates.
+
+### Different layouts
+
+```{r layouts}
+plate_layout()                                   # default: TL, TR, BR, BL + bacterium
+plate_layout(centre = "none")                    # controls
+plate_layout(radius_mm = 20)                     # inoculated 20 mm from the centre
+plate_layout(n_colonies = 3, ids = c("A", "B", "C"), start_deg = -90)
+```
+
+The expected positions only need to be *approximately* right: each colony is
+searched within `search_frac` (default 0.4) of the dish radius around its
+expected point, and colonies are matched to positions closest-first.
+
+## 4. How it works
+
+```
+photo ─► read & resize ─► detect dish (RANSAC circle, sub-pixel edge) ─► scale (mm/px)
+      ─► agar colour (mode) ─► flat-field (log-quadratic, linear RGB) ─► [grey-card calibration]
+      ─► objects = colour outliers ∪ texture outliers
+      ─► pixel classes: fungus / bacterium / halo / other   (layout-initialised mixture, EM)
+      ─► bacterium = compact central component ─► halo = connected diffusion zone
+      ─► colony cores (distance-transform maxima) matched to layout ─► seeded watershed
+      ─► half-contrast edge placement ─► measurements, profiles, bootstrap CIs, QC
+```
+
+### 4.1 Colour space
+
+Pixel values are converted from sRGB to **CIE 1976 L\*a\*b\*** (D65). CIELAB
+is approximately *perceptually uniform*: one unit of L\* is the same visible
+change in lightness whether a colony is pale or almost black. This makes
+L\* differences comparable across the whole melanization range, which is not
+true for raw RGB or grey values (they are gamma-encoded and not
+perceptually linear). a\* (green–red) and b\* (blue–yellow) carry the
+chromatic information that separates achromatic melanized hyphae from the
+warm-coloured bacteria and halo.
+
+### 4.2 Background and illumination
+
+The agar colour is found as the *mode* of the colour distribution inside the
+dish (coarse 3-D histogram + mean shift). This works even on crowded plates,
+because agar pixels cluster tightly in colour space while colonies and halos
+spread along gradients.
+
+Light fall-off towards the image edges (vignetting) or oblique lighting
+would make a colony look darker simply because of *where* it is on the dish.
+Illumination multiplies linear light, so MycoHalo fits, per linear RGB
+channel, a quadratic surface to log-intensity of agar pixels (with 3-MAD
+trimming of outliers) and divides it out, normalising every pixel to the
+illumination at the dish centre. The QC table reports the illumination range
+that was corrected (`illumination_range_pct`).
+
+### 4.3 Which pixels are "something"
+
+A pixel is an **object** (not agar) if either
+
+* its colour differs from agar by more than the 99.9 % quantile of the agar
+  noise **and** by ΔE > 3 (≈ one just-noticeable difference), or
+* its local texture (SD of L\* in a ~0.2 mm window) exceeds agar texture by
+  more than 4 robust SDs. This is what finds heavily melanized, wrinkled
+  colonies on dark agar.
+
+### 4.4 Fungus, bacterium or halo?
+
+Each object pixel is described by
+
+* the **magnitude** of its colour difference from agar, log ΔE,
+* the **direction** of that difference (a unit vector in L\*a\*b\*),
+* its **texture**.
+
+The direction is the key. A diffusible pigment at falling concentration moves
+the colour along *one* straight line from the agar colour towards the pigment
+colour, so the faint fringe of a halo points the same way as its saturated
+core. Grey fungal tissue points along the neutral lightness axis at every
+level of melanization. Because the direction of a faint pixel is uncertain,
+the model widens each pixel's direction likelihood by its own noise
+variance, (σ_noise / ΔE)² (a heteroscedastic, measurement-error-aware
+mixture). The halo, being a diffusion gradient, gets a magnitude likelihood
+that is flat up to its core level.
+
+The mixture is fitted by EM. It is **initialised from the layout**: textured
+pixels near the expected fungal positions seed "fungus", the centre seeds
+"bacterium", and smooth pixels in the ring around the centre seed "halo".
+The classes therefore keep their biological meaning. A halo class whose
+colour direction is within 12° of the fungus is dropped, because it only
+modelled colony margins.
+
+Posteriors are smoothed in space before the decision, weighted by
+confidence. Faint pixels borrow the class of the confident tissue around
+them within 0.5 mm, and pixels that fit no class are marked "other" and are
+never measured.
+
+For unusual pairs (a pigmented bacterium, a different fungus) you can
+instead train a supervised classifier from a few clicked regions:
+
+```{r supervised, eval = FALSE}
+p   <- read_plate("plate.jpg") |> detect_plate() |> model_background()
+reg <- annotate_plate(p)                       # click fungus, bacteria, halo regions
+clf <- train_classifier(extract_training_pixels(p, reg))
+res <- analyze_plate("plate.jpg", classifier = clf)
+```
+
+### 4.5 Separating the cultures
+
+* **Bacterium:** the compact bacteria-class component nearest the centre.
+  Thin bridges into light colonies are cut by an opening of 0.5 mm.
+* **Colony cores:** maxima of the Euclidean distance transform of the
+  fungal mask. These are the points deepest inside tissue, found by greedy
+  non-maximum suppression and matched to the layout positions
+  closest-first.
+* **Seeded watershed:** from these cores, a marker-controlled watershed on
+  the negative distance transform, restricted to fungal tissue, assigns every
+  fungal pixel to one colony. Touching colonies are split along their neck,
+  and no colony can claim tissue it is not connected to.
+* **Satellites:** fungal fragments not connected to any core are counted
+  and excluded.
+* **Edges:** outlines are re-placed at *half contrast* (the classical 50 %
+  criterion for a blurred step edge), which removes the ~1-pixel outward
+  bias of smoothed masks.
+
+## 5. What you get
+
+### Colony table (`res$colonies`)
+
+| column | meaning |
+|---|---|
+| `area_mm2`, `eq_diameter_mm`, `perimeter_mm` | size (scale from dish diameter) |
+| `circularity`, `solidity` | 4πA/P² and area / convex-hull area (lobing, sectoring) |
+| `L_mean`, `L_median`, `L_sd`, `L_q05…q95` | CIE lightness of the colony interior |
+| **`MI_mean`**, `MI_median` | melanization index 100 − L\* (higher = darker) |
+| `MI_lo`, `MI_hi` | 95 % spatial block-bootstrap CI of `MI_mean` |
+| `gray_imagej` | mean (R+G+B)/3 on 0–255, as ImageJ/Fiji "8-bit" |
+| `a_mean`, `b_mean`, `chroma_mean`, `hue_deg` | colour (brown shift of DHN melanin) |
+| `dark_fraction` | fraction of pixels with L\* < `dark_L` (if given) |
+| `MI_facing`, `MI_away`, **`delta_MI_facing`** | melanization of the half facing the bacterium vs. the opposite half |
+| `R_toward_mm`, `R_away_mm`, **`growth_inhibition_pct`** | radius towards / away from the bacterium; PIRG = 100 (R_away − R_toward)/R_away |
+| `gap_bacteria_mm`, `gap_halo_mm` | edge-to-edge distance to bacterium and halo (0 = contact) |
+| `specular_fraction`, `offset_from_expected_mm` | QC |
+
+On control plates the "interaction target" is the dish centre, so the same
+side-specific metrics give the **null distribution**. Always compare
+`delta_MI_facing` and `growth_inhibition_pct` on treatment plates against
+controls, never against zero: lobed colonies are never perfectly symmetric.
+
+### Edge-to-centre profiles (`res$profiles`)
+
+The growing margin of a *Z. tritici* colony is young and often lighter; older
+central tissue is darker. MycoHalo measures melanization in rings defined by
+the **distance from the colony edge** (Euclidean distance transform), not
+from the centroid, so the age gradient is followed correctly in lobed
+colonies.
+
+```{r profiles, fig.height = 3.5}
+sim2 <- simulate_plate(seed = 7, edge_lightening = 10)
+res2 <- analyze_plate(sim2$image, verbose = FALSE)
+if (requireNamespace("ggplot2", quietly = TRUE)) plot_profiles(res2)
+```
+
+Neighbouring pixels are strongly correlated (same hypha, JPEG blocks,
+in-camera processing), so a naive pixel bootstrap gives uselessly narrow
+CIs. The intervals use a **spatial block bootstrap**: 0.5 mm blocks are
+resampled as units.
+
+### Melanization landscape
+
+`plot_melanization_map()` shows the whole plate at once. On the left, a 3D
+shaded surface in which each colony rises with a height and sepia colour
+given by its local melanization index, over a floor that shows the halo
+(gold) and the bacterium (cream). On the right, the same MI field is drawn
+over the faded photograph. An arrow on each colony points to the bacterium
+and is labelled with the side-specific response ΔMI~facing~.
+
+```{r landscape, fig.width = 10, fig.height = 5.6, fig.cap = "Melanization landscape of a simulated confrontation plate in which each colony is 5 L* units darker on the side facing the bacterium."}
+sim3 <- simulate_plate(width = 900, height = 1200, seed = 42,
+                       facing_darkening = 5, edge_lightening = 8)
+res3 <- analyze_plate(sim3$image, id = "simulated plate", verbose = FALSE)
+plot_melanization_map(res3)
+```
+
+Use `type = "3d"` or `type = "2d"` for single panels, and fix `mi_range`
+when you compare several plates, so that colours and heights mean the same
+thing in every figure.
+
+### Plate table (`res$plate_summary`)
+
+Scale, dish fit quality, agar colour and noise, illumination correction,
+bacterium area and radius, halo area, outer radius (equivalent and 95th
+percentile), halo colour (Δb\* = yellowness relative to agar), satellites,
+"other" area, over-exposure and all QC warnings.
+
+## 6. Interpreting melanization in *Z. tritici*
+
+*Z. tritici* produces 1,8-dihydroxynaphthalene (DHN) melanin via a
+polyketide synthase pathway (e.g. *PKS1*), under transcriptional control
+that includes the *Zmr1* regulator. Melanization varies strongly among
+strains and with the environment (Lendenmann et al. 2014; Krishnan et al.
+2018). In culture it is usually quantified as the mean grey value of colony
+photographs. MycoHalo reports that value (`gray_imagej`) for comparability,
+but uses L\* as its primary readout because it is calibrated and
+perceptually linear.
+
+Some points to keep in mind:
+
+* **Melanization vs. morphology.** Hyphal, wrinkled colonies cast shadows,
+  so part of their darkness is topography rather than pigment. Diffuse
+  lighting minimises this. Compare treatments at the same growth stage, and
+  consider the edge-distance profile, which separates a darker centre from a
+  lighter growing margin.
+* **Localized vs. global responses.** A bacterium acting through diffusible
+  compounds is expected to create gradients: `delta_MI_facing` and the halo
+  metrics (`gap_halo_mm`) capture the spatial component, `MI_mean` the global
+  one.
+* **Absolute vs. relative.** Without a grey card, absolute L\* shifts with
+  exposure. Within one photo session with fixed settings, relative
+  comparisons are fine. Across sessions, use `reference`.
+
+## 7. Statistics: the plate is the experimental unit
+
+The four colonies on one dish share medium, bacterium, handling and
+photograph, so they are *not* independent replicates. Treating them as
+independent is pseudoreplication and inflates significance. Use a mixed
+model with a random plate effect (or analyse plate means):
+
+```{r stats}
+set.seed(1)
+d <- data.frame(plate_id = rep(sprintf("p%02d", 1:12), each = 4),
+                treatment = rep(c("control", "bacteria"), each = 24))
+d$MI_mean <- 55 + 3 * (d$treatment == "bacteria") +
+  rep(rnorm(12, 0, 1.5), each = 4) + rnorm(48, 0, 1)
+cmp <- compare_melanization(d, response = "MI_mean", group = "treatment",
+                            reference = "control")
+cmp$method
+cmp$coefficients
+cmp$icc      # share of variance between plates
+```
+
+A useful design rule: with an intra-plate correlation (ICC) of ~0.5, four
+colonies per plate carry the information of only ~1.6 independent colonies.
+Add plates, not colonies.
+
+## 8. Validation
+
+Every algorithmic step was validated on simulated plates with known truth
+(`simulate_plate()`): grey, wrinkled, lobed colonies, a whitish bacterium,
+a diffuse yellow halo overlapping the colonies in brightness, satellites,
+vignetting, exposure error and sensor noise. The script is in
+`system.file("validation", "validate.R", package = "MycoHalo")`.
+
+```{r validation}
+v <- read.csv(system.file("validation", "simulation_validation.csv", package = "MycoHalo"))
+agg <- do.call(rbind, lapply(split(v, v$scenario), function(s) data.frame(
+  scenario = s$scenario[1],
+  detected = paste0(sum(s$detected), "/", nrow(s)),
+  max_abs_area_err_pct = max(abs(s$area_err_pct), na.rm = TRUE),
+  max_abs_MI_err = max(abs(s$MI_err), na.rm = TRUE),
+  mean_delta_MI_facing = round(mean(s$dMI_facing, na.rm = TRUE), 2))))
+agg[order(agg$max_abs_MI_err), ]
+```
+
+In summary, colony area is within ~2.2 % (typically < 1 %) and
+melanization within 0.9 L\* units under all realistic conditions. The exception is an uncorrected
+exposure error, which is why the grey card matters. A simulated 5-unit
+side-specific darkening is recovered as 4–6 units, against at most ±2 under
+the null. A missing colony is reported as not detected rather than replaced by
+halo tissue.
+
+Simulations cannot capture every property of real photographs. For new
+set-ups, also validate against a few colonies outlined by hand, e.g. in
+Fiji.
+
+## 9. Troubleshooting
+
+| QC warning / symptom | cause and fix |
+|---|---|
+| *Dish detection failed* | background not uniform or not contrasting; use a dark matte background or pass `dish = c(x, y, r)` |
+| dish circle on the inner wall instead of the rim | fine, but then set `dish_diameter_mm` to the inner diameter (see §2) |
+| *Colony not detected* | failed inoculation, or colony far from its expected position; check `plate_layout()` orientation / `radius_mm`, increase `search_frac` |
+| colony includes halo or bacterium | train a supervised classifier (§4.4) for this pair |
+| *> 2 % specular pixels* | reduce exposure, diffuse the light |
+| *strong illumination gradient* | the correction worked, but improve lighting |
+| satellites merged into a colony | they touch the colony in the image; unavoidable, but reported via `solidity` |
+
+## References
+
+* Beucher S, Meyer F (1993) The morphological approach to segmentation: the watershed transformation. In: *Mathematical Morphology in Image Processing*, 433–481.
+* CIE (2004) *Colorimetry*, 3rd ed. CIE 15:2004.
+* Comaniciu D, Meer P (2002) Mean shift: a robust approach toward feature space analysis. *IEEE TPAMI* 24:603–619.
+* Dempster AP, Laird NM, Rubin DB (1977) Maximum likelihood from incomplete data via the EM algorithm. *J R Stat Soc B* 39:1–38.
+* Felzenszwalb PF, Huttenlocher DP (2012) Distance transforms of sampled functions. *Theory of Computing* 8:415–428.
+* Fischler MA, Bolles RC (1981) Random sample consensus. *Commun ACM* 24:381–395.
+* Hurlbert SH (1984) Pseudoreplication and the design of ecological field experiments. *Ecol Monogr* 54:187–211.
+* Kasa I (1976) A circle fitting procedure and its error analysis. *IEEE Trans Instrum Meas* 25:8–14.
+* Krishnan P, Meile L, Plissonneau C, Ma X, Hartmann FE, Croll D, McDonald BA, Sánchez-Vallet A (2018) Transposable element insertions shape gene regulation and melanin production in a fungal pathogen of wheat. *BMC Biology* 16:78. doi:10.1186/s12915-018-0543-2
+* Künsch HR (1989) The jackknife and the bootstrap for general stationary observations. *Ann Stat* 17:1217–1241.
+* Lendenmann MH, Croll D, Stewart EL, McDonald BA (2014) Quantitative trait locus mapping of melanization in the plant pathogenic fungus *Zymoseptoria tritici*. *G3* 4:2519–2533. PMID 25360032
+* Meyer F (1994) Topographic distance and watershed lines. *Signal Processing* 38:113–125.
+* Otsu N (1979) A threshold selection method from gray-level histograms. *IEEE Trans Syst Man Cybern* 9:62–66.
+* Sharma G (2003) *Digital Color Imaging Handbook*. CRC Press.
+* Wells WM (1986) Efficient synthesis of Gaussian filters by cascaded uniform filters. *IEEE TPAMI* 8:234–239.

@@ -1,0 +1,3 @@
+file,plate_id,treatment,bacterium,zymo_strain,medium,day,replicate,photo_date,notes
+2026_05_26_20.JPG,2026_05_26_20,bacteria,isolate_X,strain_Y,YMS,7,1,2026-05-26,
+2026_05_26_37.JPG,2026_05_26_37,control,,strain_Y,YMS,7,1,2026-05-26,
