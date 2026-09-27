@@ -8,7 +8,6 @@
 
 
 [![made for Zymoseptoria tritici](https://img.shields.io/badge/%F0%9F%8D%84%20made%20for-Zymoseptoria%20tritici-5D4037?style=flat-square&labelColor=2B1D16)](https://en.wikipedia.org/wiki/Zymoseptoria_tritici)
-[![plates: 4 colonies + 1 bacterium](https://img.shields.io/badge/%F0%9F%A7%AB%20plate-4%20colonies%20%2B%201%20bacterium-8D6E63?style=flat-square&labelColor=2B1D16)](https://github.com/mghotbi/MycoHalo/blob/HEAD/vignettes/MycoHalo.Rmd)
 [![powered by Rcpp](https://img.shields.io/badge/%E2%9A%A1%20powered%20by-Rcpp-276DC3?style=flat-square&labelColor=2B1D16)](https://www.rcpp.org/)
 [![ORCID](https://img.shields.io/badge/ORCID-0000--0001--9185--9993-A6CE39?style=flat-square&logo=orcid&logoColor=white&labelColor=2B1D16)](https://orcid.org/0000-0001-9185-9993)
 <!-- badges: end -->
