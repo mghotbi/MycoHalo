@@ -4,7 +4,6 @@
 ^README\.Rmd$
 ^\.github$
 ^validation$
-^inst/extdata/.*\.(JPG|jpg|jpeg)$
 ^_old_prototype
 ^confrontaR_results$
 ^mycohalo_qc$
@@ -12,3 +11,4 @@
 ^.*\.tar\.gz$
 ^docs$
 ^_pkgdown\.yml$
+^photos_fullres$

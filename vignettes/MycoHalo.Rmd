@@ -12,7 +12,7 @@ vignette: >
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 9, fig.height = 4.7,
-                      dpi = 90, out.width = "100%")
+                      dpi = 60, dev = "jpeg", out.width = "100%")
 library(MycoHalo)
 ```
 
@@ -100,6 +100,25 @@ res <- analyze_plate("plates/2026_05_26_20.JPG",
 ctrl <- analyze_plate("plates/2026_05_26_37.JPG",
                       layout = plate_layout(centre = "none"))
 ```
+
+### Real plates shipped with the package
+
+Two of our photographs travel with the package (`inst/extdata/`), so the
+whole pipeline can be tried on real data:
+
+```{r real-plates, fig.width = 10, fig.height = 5.6}
+treat <- analyze_plate(example_plate("confrontation"), verbose = FALSE)
+ctrl  <- analyze_plate(example_plate("control"),
+                       layout = plate_layout(centre = "none"), verbose = FALSE)
+rbind(cbind(plate = "bacteria", treat$colonies[, c("colony_id", "area_mm2", "MI_mean")]),
+      cbind(plate = "control",  ctrl$colonies[,  c("colony_id", "area_mm2", "MI_mean")]))
+plot_qc(treat)
+plot_melanization_map(treat, mi_range = c(35, 85), main = "Zymoseptoria + bacterium")
+plot_melanization_map(ctrl,  mi_range = c(35, 85), main = "Zymoseptoria control")
+```
+
+Your own photos go in any folder on your computer. Only example data
+belongs inside the package, in `inst/extdata/`, never in a top-level folder.
 
 ### Metadata and batch processing
 

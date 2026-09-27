@@ -10,7 +10,7 @@ edge-to-centre melanization profiles, side-specific melanization facing the
 bacterium, growth inhibition, halo geometry, and a quality-control figure for
 every plate.
 
-<p align="center"><img src="man/figures/README-landscape.png" width="100%"></p>
+<p align="center"><img src="man/figures/README-landscape.jpg" width="100%"></p>
 
 ## Why not grayscale?
 
